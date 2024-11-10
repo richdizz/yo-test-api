@@ -1,16 +1,23 @@
-var restify = require("restify");
+const express = require("express");
 
-function respond(req, res, next) {
-  res.send("hello " + req.params.name);
-  next();
-}
-
+const app = express();
 const port = process.env.PORT || 8080;
 
-var server = restify.createServer();
-server.get("/hello/:name", respond);
-server.head("/hello/:name", respond);
+// Define the route handler function
+function respond(req, res) {
+  res.send("hello " + req.params.name);
+}
 
-server.listen(port, function() {
-  console.log("%s listening at %s", server.name, server.url);
+// Define routes
+app.get("/hello/:name", respond);
+
+// Express does not have a direct equivalent for HEAD requests like Restify.
+// However, you can easily define it using app.head
+app.head("/hello/:name", (req, res) => {
+  res.status(200).send();
+});
+
+// Start the Express server
+app.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
 });
